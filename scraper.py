@@ -74,7 +74,7 @@ def main():
         history.append(entry)
     else:
         history[-1] = entry
-    history = history[-30:]  # 保留最近 30 天
+    history = history[-60:]  # 保留最近 60 天
 
     result = {
         "date": today,
