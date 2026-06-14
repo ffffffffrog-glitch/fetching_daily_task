@@ -62,11 +62,26 @@ def main():
         print(f"Error: {e}", file=sys.stderr)
         return
 
+    try:
+        with open("tasks.json", "r", encoding="utf-8") as f:
+            old = json.load(f)
+        history = old.get("history", [])
+    except Exception:
+        history = []
+
+    entry = {"date": today, "main": main_tasks, "side": side_tasks}
+    if not history or history[-1]["date"] != today:
+        history.append(entry)
+    else:
+        history[-1] = entry
+    history = history[-30:]  # 保留最近 30 天
+
     result = {
         "date": today,
         "main": main_tasks,
         "side": side_tasks,
-        "fetched_at": datetime.now(TW_TZ).isoformat()
+        "fetched_at": datetime.now(TW_TZ).isoformat(),
+        "history": history
     }
 
     with open("tasks.json", "w", encoding="utf-8") as f:
