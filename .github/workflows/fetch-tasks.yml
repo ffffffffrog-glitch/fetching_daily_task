@@ -2,7 +2,7 @@ name: Fetch Daily Tasks
 
 on:
   schedule:
-    - cron: '0 16 * * *'  # 台灣時間每天午夜 00:00（UTC+8 → UTC 16:00）
+    - cron: '0 2 * * *'   # 台灣時間每天上午 10:00（UTC+8 → UTC 02:00）
   workflow_dispatch:        # 允許手動觸發（測試用）
 
 jobs:
