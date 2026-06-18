@@ -69,6 +69,16 @@ def main():
     except Exception:
         history = []
 
+    # 新鮮度防呆：來源（@earthonlinequest）每天台灣早上 9 點才發新任務。
+    # GitHub Actions 的排程常延遲數小時、不準時，可能在早上 9 點前就觸發；
+    # 此時頁面最頂端還是「昨天」的貼文，爬蟲會抓到昨日內容。
+    # 若這次抓到的內容與「今天之前最近一筆」完全相同，代表今日任務尚未發布，
+    # 直接跳過本次（不要把昨天的內容蓋上今天的日期），等之後的排程再抓真正的今日任務。
+    prev_entry = next((h for h in reversed(history) if h.get("date") != today), None)
+    if prev_entry and prev_entry.get("main") == main_tasks and prev_entry.get("side") == side_tasks:
+        print("今日任務尚未發布（抓到的內容與昨日相同），本次跳過", file=sys.stderr)
+        return
+
     entry = {"date": today, "main": main_tasks, "side": side_tasks}
     if not history or history[-1]["date"] != today:
         history.append(entry)
