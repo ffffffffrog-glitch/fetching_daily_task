@@ -1,14 +1,12 @@
 name: Fetch Daily Tasks
 
 on:
+  # 主要觸發改由外部排程（cron-job.org）打 workflow_dispatch，準時可靠。
+  # 下面保留「一行」GitHub 內建 cron 當備援：萬一外部排程沒跑，這裡仍會補一次。
+  # scraper.py 有新鮮度防呆（抓到與昨日相同會跳過），所以兩邊都跑也無害。
   schedule:
-    # 來源 @earthonlinequest 每天台灣早上 9 點發新任務。
-    # GitHub Actions 排程常延遲數小時且不準時，故台灣 9 點後每小時嘗試一次
-    # （UTC 01:00–14:00 = 台灣 09:00–22:00；分鐘設 25 以避開整點壅塞、降低延遲）。
-    # scraper.py 內建新鮮度防呆：抓到的內容若與昨日相同會自動跳過，
-    # 所以多跑幾次完全無害 —— 只要來源一發布，最近一次排程就會抓到真正的今日任務。
-    - cron: '25 1-14 * * *'
-  workflow_dispatch:        # 允許手動觸發（測試用）
+    - cron: '25 6 * * *'   # UTC 06:25 = 台灣 14:25（下午備援一次）
+  workflow_dispatch:        # 外部排程 / 手動觸發用（務必保留）
 
 jobs:
   fetch:
